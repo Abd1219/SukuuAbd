@@ -1,0 +1,18 @@
+# Archivos temporales de Firebase
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+
+# Archivos de respaldo/recuperación locales
+recover.js
+recovered_index.html
+firebase-schema.json
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Node (si se llega a usar)
+node_modules/
+npm-debug.log*

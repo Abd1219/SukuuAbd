@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil Médico de Emergencia - SOS</title>
+    <style>
+        /* 
+         * Diseño ultra ligero, alto contraste
+         * Orientado a la lectura en situaciones de estrés y mala iluminación 
+         */
+        :root {
+            --red: #d32f2f;
+            --black: #000000;
+            --dark-gray: #222222;
+            --white: #ffffff;
+            --light-gray: #f0f0f0;
+            --border: #cccccc;
+            --green: #2e7d32;
+            --yellow: #fbc02d;
+            --blue: #1565c0;
+            --whatsapp: #25D366;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--black);
+            line-height: 1.4;
+            padding-bottom: 2rem;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--white);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            min-height: 100vh;
+        }
+
+        /* Indicador visual de riesgo */
+        #risk-bar {
+            height: 16px;
+            background-color: var(--dark-gray); /* Default */
+            width: 100%;
+        }
+
+        /* SECCIÓN 1: ENCABEZADO */
+        header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .sos-title {
+            color: var(--red);
+            font-size: 1.3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-age {
+            font-size: 1.3rem;
+            color: var(--dark-gray);
+            margin-bottom: 1rem;
+        }
+
+        .blood-type-badge {
+            display: inline-block;
+            background-color: var(--red);
+            color: var(--white);
+            font-size: 2.5rem;
+            font-weight: 900;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            border: 3px solid var(--dark-gray);
+        }
+
+        /* SECCIONES GENERALES */
+        section {
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--black);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            border-left: 5px solid var(--red);
+            padding-left: 10px;
+        }
+
+        /* Listas de datos médicos */
+        .data-block { margin-bottom: 1.2rem; }
+        .data-block:last-child { margin-bottom: 0; }
+        
+        .label {
+            display: block;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--dark-gray);
+            margin-bottom: 0.2rem;
+        }
+        
+        .value {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .danger-text { color: var(--red); font-weight: 900; }
+
+        /* Etiquetas para listas */
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+        }
+        
+        .tag {
+            background-color: var(--light-gray);
+            border: 2px solid var(--black);
+            padding: 0.3rem 0.8rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 4px;
+        }
+        
+        .tag.danger {
+            background-color: #ffebee;
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* SECCIÓN CONTACTOS */
+        .contact-card {
+            background-color: var(--light-gray);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+        .contact-card:last-child { margin-bottom: 0; }
+        
+        .contact-name { font-size: 1.4rem; font-weight: 800; }
+        .contact-relation { font-size: 1.1rem; color: var(--dark-gray); margin-bottom: 0.8rem; }
+        
+        .contact-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-direction: column;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .btn-call { background-color: var(--blue); }
+        .btn-wa { background-color: var(--whatsapp); color: var(--black); }
+
+        /* SECCIÓN LEGAL */
+        .legal-notice {
+            background-color: var(--dark-gray);
+            color: var(--white);
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .legal-notice p { margin-bottom: 0.5rem; }
+        .last-updated { font-size: 0.85rem; color: #aaaaaa; }
+
+        /* LOADER */
+        .loader {
+            text-align: center;
+            padding: 5rem 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        #profile-content { display: none; }
+
+        .btn-edit {
+            display: block;
+            text-align: center;
+            margin: 2rem auto;
+            color: var(--blue);
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        /* MODAL DE EMERGENCIA */
+        #emergency-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 12px;
+            text-align: center;
+            padding: 2rem;
+            border: 5px solid var(--red);
+            animation: pulse-border 1.5s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { border-color: var(--red); }
+            50% { border-color: var(--black); }
+            100% { border-color: var(--red); }
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            color: var(--red);
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .modal-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+        }
+
+        .btn-911 {
+            background-color: var(--red);
+            color: white;
+            font-size: 2rem;
+            padding: 1rem;
+            border-radius: 10px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4);
+        }
+
+        .btn-close-modal {
+            background: none;
+            border: 2px solid var(--dark-gray);
+            color: var(--dark-gray);
+            padding: 0.8rem;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="risk-bar"></div>
+        
+        <div style="display: flex; justify-content: flex-end; align-items: center; padding: 0.5rem 1rem; border-bottom: 1px solid var(--border); background-color: var(--light-gray);">
+            <div id="user-menu" style="display: flex; align-items: center; position: relative;">
+                <button id="btn-login-header" style="background: var(--blue); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold;">Iniciar Sesión</button>
+                <img id="user-avatar" src="" alt="Avatar" title="Menú" style="display: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 2px solid var(--dark-gray);">
+                <div id="dropdown-menu" style="display: none; position: absolute; top: 45px; right: 0; background: var(--white); border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 100; flex-direction: column; overflow: hidden;">
+                    <button id="btn-edit-profile" style="background: var(--white); color: var(--blue); border: none; padding: 0.8rem 1rem; cursor: pointer; text-align: left; font-weight: bold; border-bottom: 1px solid var(--border); white-space: nowrap; width: 100%;">✏️ Editar mi perfil</button>
+                    <button id="btn-logout" style="background: var(--white); color: var(--red); border: none; padding: 0.8rem 1rem; cursor: pointer; text-align: left; font-weight: bold; white-space: nowrap; width: 100%;">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="loader" class="loader">
+            ⏳ OBTENIENDO DATOS VITALES...
+        </div>
+
+        <div id="profile-content">
+            <!-- SECCIÓN 1: ENCABEZADO -->
+            <header>
+                <div class="sos-title">🆘 Perfil Médico de Emergencia</div>
+                <h1 class="profile-name" id="p-name">--</h1>
+                <div class="profile-age" id="p-age">--</div>
+                <div class="blood-type-badge" id="p-blood">--</div>
+            </header>
+
+            <!-- SECCIÓN 2: INFO CRÍTICA -->
+            <section>
+                <h2>❤️ Información Médica Crítica</h2>
+                
+                <div class="data-block">
+                    <span class="label">⚠️ Alergias</span>
+                    <div class="tag-list" id="p-allergies"></div>
+                </div>
+
+                <div class="data-block">
+                    <span class="label">🧠 Condiciones Médicas</span>
+                    <div class="tag-list" id="p-conditions"></div>
+                </div>
+
+                <div class="data-block">
+                    <span class="label">💊 Medicamentos (Uso Diario)</span>
+                    <div class="tag-list" id="p-meds"></div>
+                </div>
+
+                <div class="data-block">
+                    <span class="label danger-text">🚫 Medicamentos Contraindicados</span>
+                    <div class="tag-list" id="p-contra"></div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 3: CONTACTOS -->
+            <section>
+                <h2>📞 Contactos de Emergencia</h2>
+                <div id="p-contacts">
+                    <!-- Dinámico -->
+                </div>
+            </section>
+
+            <!-- SECCIÓN 4: DATOS ADICIONALES -->
+            <section>
+                <h2>🧾 Datos Adicionales</h2>
+                <div class="data-block">
+                    <span class="label">🏥 Seguro Médico / Institución</span>
+                    <div class="value" id="p-insurance">No reportado</div>
+                </div>
+                <div class="data-block">
+                    <span class="label">🫀 Donador de Órganos</span>
+                    <div class="value" id="p-donor">No especificado</div>
+                </div>
+                <div class="data-block" style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <span class="label">📝 Observaciones Médicas</span>
+                    <div class="value" style="font-weight: normal; font-size: 1.1rem;" id="p-notes">Ninguna</div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 5: AVISO LEGAL -->
+            <div class="legal-notice">
+                <p>“Esta información fue proporcionada voluntariamente por el propietario para uso exclusivo en caso de emergencia médica.”</p>
+                <p class="last-updated">Última actualización: <span id="p-updated">--</span></p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL DE EMERGENCIA -->
+    <div id="emergency-modal">
+        <div class="modal-content">
+            <div class="modal-icon">⚠️</div>
+            <div class="modal-title">¡EMERGENCIA DETECTADA!</div>
+            <p class="modal-text">¿Necesitas asistencia inmediata para este accidente?</p>
+            
+            <a href="tel:911" class="btn btn-911">📞 LLAMAR 911</a>
+            
+            <button class="btn-close-modal" id="close-emergency-modal">
+                VER PERFIL MÉDICO
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCDfFAmA9hJRQZW6llno8RNEiYlNHy4tz8",
+            authDomain: "sukuuabd.firebaseapp.com",
+            projectId: "sukuuabd",
+            storageBucket: "sukuuabd.firebasestorage.app",
+            messagingSenderId: "118169504355",
+            appId: "1:118169504355:web:75fb68a7e3668da5ad8656"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Limpiar número para WhatsApp
+        const formatPhoneForWA = (phone) => {
+            return phone.replace(/[^0-9]/g, '');
+        };
+
+        const renderTags = (array, isDanger = false) => {
+            if (!array || array.length === 0) return '<div class="value" style="color: #666;">No reportadas</div>';
+            return array.map(item => `<span class="tag ${isDanger ? 'danger' : ''}">${item}</span>`).join('');
+        };
+
+        async function loadProfile(forcedId = null) {
+            try {
+                // Obtener ID desde los parámetros de la URL, ej. ?id=USR-123
+                const urlParams = new URLSearchParams(window.location.search);
+                let profileId = forcedId || urlParams.get('id');
+
+                // Si no hay ID en la URL, mostramos un mensaje pidiendo que escanee un QR
+                if (!profileId) {
+                    document.getElementById('profile-content').style.display = 'none';
+                    document.getElementById('loader').style.display = 'block';
+                    document.getElementById('loader').innerHTML = `
+                        <p style="color:var(--dark-gray);">Por favor, escanea un código QR válido de SukuuAbd para ver un perfil de emergencia.</p>
+                        <br>
+                        <a href="setup.html" style="color:var(--blue);text-decoration:underline;font-size:1.2rem;font-weight:bold;">Crear o editar mi perfil</a>
+                    `;
+                    return; // Salimos de la función
+                }
+
+                const docSnap = await getDoc(doc(db, "profiles", profileId));
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+
+                    // Riesgo
+                    const riskBar = document.getElementById('risk-bar');
+                    if(data.riskLevel === 'red') riskBar.style.backgroundColor = 'var(--red)';
+                    else if(data.riskLevel === 'yellow') riskBar.style.backgroundColor = 'var(--yellow)';
+                    else if(data.riskLevel === 'green') riskBar.style.backgroundColor = 'var(--green)';
+
+                    // Sección 1
+                    document.getElementById('p-name').textContent = data.personal.fullName;
+                    document.getElementById('p-age').textContent = `${data.personal.age} AÑOS`;
+                    document.getElementById('p-blood').textContent = data.personal.bloodType || '--';
+
+                    // Sección 2
+                    document.getElementById('p-allergies').innerHTML = renderTags(data.medical.allergies, true);
+                    document.getElementById('p-conditions').innerHTML = renderTags(data.medical.conditions);
+                    document.getElementById('p-meds').innerHTML = renderTags(data.medical.dailyMeds);
+                    document.getElementById('p-contra').innerHTML = renderTags(data.medical.contraindications, true);
+
+                    // Sección 3: Contactos
+                    if(data.contacts && data.contacts.length > 0) {
+                        const contactsHtml = data.contacts.map(c => {
+                            const cleanPhone = formatPhoneForWA(c.phone);
+                            return `
+                                <div class="contact-card">
+                                    <div class="contact-name">${c.name}</div>
+                                    <div class="contact-relation">${c.relation}</div>
+                                    <div class="contact-buttons">
+                                        <a href="tel:${c.phone}" class="btn btn-call">📞 Llamar</a>
+                                        <a href="https://wa.me/${cleanPhone}" target="_blank" class="btn btn-wa">💬 WhatsApp</a>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                        document.getElementById('p-contacts').innerHTML = contactsHtml;
+                    } else {
+                        document.getElementById('p-contacts').innerHTML = '<div class="value">No hay contactos registrados</div>';
+                    }
+
+                    // Sección 4
+                    document.getElementById('p-insurance').textContent = data.additional.insurance || 'No reportado';
+                    document.getElementById('p-donor').textContent = data.additional.organDonor ? 'SÍ' : 'NO';
+                    if (data.additional.notes && data.additional.notes.trim() !== '') {
+                        document.getElementById('p-notes').textContent = data.additional.notes;
+                    }
+                    if (data.additional.lastUpdated) {
+                        document.getElementById('p-updated').textContent = data.additional.lastUpdated;
+                    }
+
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('profile-content').style.display = 'block';
+
+                    // Mostrar el modal de emergencia solo si se cargó por ID (escaneo real)
+                    if (profileId) {
+                        document.getElementById('emergency-modal').style.display = 'flex';
+                    }
+
+                } else {
+                    document.getElementById('loader').innerHTML = `
+                        <p style="color:var(--red);">No se encontró el perfil en la base de datos.</p>
+                        <br>
+                        <a href="setup.html" style="color:var(--blue);text-decoration:underline;font-size:1.2rem;">Crear Perfil</a>
+                    `;
+                }
+            } catch (error) {
+                console.error("Error al obtener documento:", error);
+                document.getElementById('loader').textContent = "ERROR AL CARGAR LOS DATOS. VERIFIQUE CONEXIÓN.";
+            }
+        }
+
+        import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        const btnLogin = document.getElementById('btn-login-header');
+        const userAvatar = document.getElementById('user-avatar');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+
+        onAuthStateChanged(auth, (user) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const idParam = urlParams.get('id');
+
+            if (user) {
+                btnLogin.style.display = 'none';
+                userAvatar.style.display = 'block';
+                userAvatar.src = user.photoURL || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
+                
+                // Si hay un ID en la URL, priorizar ese perfil (ej. un paramédico logueado viendo a otro)
+                // Si no hay ID, cargar el perfil del usuario actual
+                if (idParam) {
+                    loadProfile(idParam);
+                } else {
+                    document.getElementById('loader').style.display = 'block';
+                    document.getElementById('loader').innerHTML = '⏳ OBTENIENDO TUS DATOS...';
+                    loadProfile(user.uid);
+                }
+            } else {
+                btnLogin.style.display = 'block';
+                userAvatar.style.display = 'none';
+                dropdownMenu.style.display = 'none';
+                
+                // Si no hay sesión, cargar el ID de la URL si existe
+                if (idParam) {
+                    loadProfile(idParam);
+                } else {
+                    loadProfile(); // Mostrará el mensaje de "Escanea un QR"
+                }
+            }
+        });
+
+        btnLogin.addEventListener('click', async () => {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                alert("Error al iniciar sesión: " + error.message);
+            }
+        });
+
+        userAvatar.addEventListener('click', () => {
+            dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'flex' : 'none';
+        });
+
+        document.getElementById('btn-edit-profile').addEventListener('click', () => {
+            window.location.href = "setup.html";
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                dropdownMenu.style.display = 'none';
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error("Error al cerrar sesión", error);
+            }
+        });
+
+        // Cerrar modal de emergencia
+        document.getElementById('close-emergency-modal').addEventListener('click', () => {
+            document.getElementById('emergency-modal').style.display = 'none';
+        });
+
+    </script>
+</body>
+</html>

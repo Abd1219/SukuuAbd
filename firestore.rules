@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /profiles/{userId} {
+      // Permite que cualquier persona vea un perfil específico si tiene el ID (vía QR)
+      // Pero no permite listar o buscar todos los perfiles de la base de datos
+      allow get: if true;
+      allow list: if false;
+
+      // Solo el usuario autenticado puede crear, actualizar o borrar su propio perfil
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Regla por defecto: denegar todo lo demás
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
